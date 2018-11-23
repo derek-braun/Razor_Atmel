@@ -87,21 +87,20 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+  /* All discrete LEDs to off */
   LedOff(CYAN);
   LedOff(GREEN);
   LedOff(YELLOW);
   LedOff(ORANGE);
- 
-  /* Turn on an LED using the ON function */
-  LedOn(BLUE);
+  LedOff(BLUE);
+  LedOff(PURPLE);
+  LedOff(RED);
+  LedOff(WHITE);
   
-  /* Turn on an LED using the TOGGLE function */
-  LedOn(PURPLE);
-  /* Set an LED to blink at 2Hz */
-  LedBlink(RED, LED_2HZ);
-  
-  /* Set an LED to the dimmest state we have (5% duty cycle) */
-  LedPWM(WHITE, LED_PWM_5);
+  /* Backlight to white */
+  LedOn(LCD_RED);
+  LedOn(LCD_GREEN);
+  LedOn(LCD_BLUE);
   
   HEARTBEAT_OFF();
   
@@ -153,7 +152,21 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
+  static int BlinkCount = 0;
+  static u8 u8Index = 0;
   static u32 u32Counter = 0;
+  static u8 u8Letter = 0;
+  static u8 u8MorseIndex = 0;
+  static bool selectLetter = TRUE;
+  static bool inter = FALSE;
+  
+  static int Morse[26][5] = {{2,1,0,0}, {2,1,1,1,0}, {2,1,2,1,0}, {2,1,1,0,0}, {1,0,0,0,0}, 
+  {1,1,2,1,0}, {2,2,1,0,0}, {1,1,1,1,0}, {1,1,0,0,0}, {1,2,2,2,0}, {2,1,2,0,0}, {1,2,1,1,0}, {2,2,0,0,0}, 
+  {2,1,0,0,0}, {2,2,2,0,0}, {1,2,2,1,0}, {2,2,1,2,0}, {1,2,1,0,0}, {1,1,1,0,0}, {2,0,0,0,0}, {1,1,2,0,0}, 
+  {1,1,1,2,0}, {1,2,2,0,0}, {2,1,1,2,0}, {2,1,2,2,0}, {2,2,1,1,0}};
+  
+  static char message[] = "HELLOWORLD";
+  
   static bool bLightIsOn = FALSE;
   
   /* Increment u32Counter every 1ms cycle */
@@ -173,6 +186,65 @@ static void UserApp1SM_Idle(void)
       HEARTBEAT_ON();
     }
     bLightIsOn = !bLightIsOn;
+  }
+  if(WasButtonPressed(BUTTON0))
+  {
+    BlinkCount++;
+    if(BlinkCount == 250)
+    {
+      BlinkCount = 0;
+      if(selectLetter == TRUE)
+      {
+        if(u8Index == strlen(message))
+        {
+          u8Index = 0;
+          LedOff(RED);
+          LedOn(GREEN);
+        }
+        else
+        {
+          LedOff(GREEN);
+          u8Letter = ((int)message[u8Index] - 65);
+          u8Index++;
+          selectLetter = FALSE;
+        }    
+      }
+      else
+      {
+        if(inter == FALSE){
+          LedOff(BLUE);
+          if(Morse[u8Letter][u8MorseIndex] == 2)
+          {
+            LedOn(RED);
+            u8MorseIndex++;
+            inter = TRUE;
+            BlinkCount = -250;
+          }
+          else if(Morse[u8Letter][u8MorseIndex] == 1)
+          {
+            LedOn(RED);
+            u8MorseIndex++;
+            inter = TRUE;
+            BlinkCount = 0;
+          }
+          else
+          {
+            LedOff(RED);
+            LedOn(BLUE);
+            u8MorseIndex = 0;
+            BlinkCount = -500;
+            inter = FALSE;
+            selectLetter = TRUE;
+          }
+        }
+        else
+        {
+          LedOff(RED);
+          inter = FALSE;
+          BlinkCount = 0;
+        }
+      }
+    }
   }
 } /* end UserApp1SM_Idle() */
     

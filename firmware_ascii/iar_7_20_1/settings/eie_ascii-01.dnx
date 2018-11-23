@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>4212451207</Checksum>
+        <Checksum>4232487256</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -47,21 +47,15 @@
         <Enabled>0</Enabled>
         <ShowSource>1</ShowSource>
     </Trace1>
-    <DisassembleMode>
-        <mode>0</mode>
-    </DisassembleMode>
-    <Breakpoints2>
-        <Count>0</Count>
-    </Breakpoints2>
+    <TermIOLog>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+    </TermIOLog>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
         <Category>_ 0</Category>
     </LogFile>
-    <Aliases>
-        <Count>0</Count>
-        <SuppressDialog>0</SuppressDialog>
-    </Aliases>
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>1</Mode>
@@ -75,8 +69,22 @@
     <CallStackStripe>
         <ShowTiming>1</ShowTiming>
     </CallStackStripe>
-    <TermIOLog>
-        <LoggingEnabled>_ 0</LoggingEnabled>
-        <LogFile>_ ""</LogFile>
-    </TermIOLog>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Count>0</Count>
+    </Breakpoints2>
+    <Aliases>
+        <A0>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_ascii\application\main.c" ""</A0>
+        <A1>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_ascii\drivers\lcd_nhd-c0220biz.c" ""</A1>
+        <A2>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_ascii\drivers\sdcard.c" ""</A2>
+        <A3>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_common\cmsis\core_cm3.h" ""</A3>
+        <A4>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_common\drivers\ant_api.c" ""</A4>
+        <A5>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_common\drivers\exceptions.c" ""</A5>
+        <A6>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_common\drivers\interrupts.c" ""</A6>
+        <A7>_ "C:\Users\dbrau\OneDrive\Documents\GitHub\Razor_Atmel\firmware_common\drivers\timer.c" ""</A7>
+        <Count>8</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
 </settings>
