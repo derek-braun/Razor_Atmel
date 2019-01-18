@@ -35,7 +35,6 @@ Runs current task state.  Should only be called once in main loop.
 **********************************************************************************************************************/
 
 #include "configuration.h"
-
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_UserApp1"
@@ -68,6 +67,8 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
+
+static int setBuzzer(int freq, int start, int end, int time);
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -153,7 +154,11 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 {
   static int BlinkCount = 0;
+  static int BuzzerCounter = 0;
+  static int noteIndex = 0;
+  static int currentTime = 0;
   static u8 u8Index = 0;
+  static int nextNote = 0;
   static u32 u32Counter = 0;
   static u8 u8Letter = 0;
   static u8 u8MorseIndex = 0;
@@ -165,6 +170,9 @@ static void UserApp1SM_Idle(void)
   {2,1,0,0,0}, {2,2,2,0,0}, {1,2,2,1,0}, {2,2,1,2,0}, {1,2,1,0,0}, {1,1,1,0,0}, {2,0,0,0,0}, {1,1,2,0,0}, 
   {1,1,1,2,0}, {1,2,2,0,0}, {2,1,1,2,0}, {2,1,2,2,0}, {2,2,1,1,0}};
   
+  static int note[] = {660, 0, 660, 0, 660, 0, 510, 0, 660, 0, 770, 0, 380, 0, 510, 0, 380, 0, 320, 0, 440, 0, 480, 0, 450};//, 0, 430, 0, 380, 0, 660, 0, 760, 0, 860, 0, 700, 0, 760, 0, 660, 0, 520, 0, 580, 0, 480, 0, 510, 0, 380, 0, 320, 0, 440, 0, 480, 0, 450, 0, 430, 0, 380, 0, 660, 0, 760, 0, 860, 0, 700, 0, 760, 0, 660, 0, 520, 0, 580, 0, 480, 0, 500, 0, 760, 0, 720, 0, 680, 0, 620, 0, 650, 0, 380, 0, 430, 0, 500, 0, 430, 0, 500, 0, 570, 0, 500, 0, 760, 0, 720, 0, 680, 0, 620, 0}; 
+  static int delay[] = {100, 150, 100, 300, 100, 300, 100, 100, 100, 300, 100, 550, 100, 575, 100, 450, 100, 400, 100, 500, 100, 300, 80, 330, 100};//, 150, 100, 300, 100, 200, 80, 200, 50, 150, 100, 300, 80, 150, 50, 350, 80, 300, 80, 150, 80, 150, 80, 500, 100, 450, 100, 400, 100, 500, 100, 300, 80, 330, 100, 150, 100, 300, 100, 200, 80, 200, 50, 150, 100, 300, 80, 150, 50, 350, 80, 300, 80, 150, 80, 150, 80, 500, 100, 300, 100, 100, 100, 150, 100, 150, 150, 300, 150, 300, 100, 150, 100, 150, 100, 300, 100, 150, 100, 100, 100, 220, 100, 300, 100, 100, 100, 150, 100, 150, 150, 300};
+    
   static char message[] = "HELLOWORLD";
   
   static bool bLightIsOn = FALSE;
@@ -187,9 +195,32 @@ static void UserApp1SM_Idle(void)
     }
     bLightIsOn = !bLightIsOn;
   }
+  
+  if(WasButtonPressed(BUTTON1))
+  {
+    BuzzerCounter++;
+    PWMAudioOn(BUZZER1);
+    nextNote = setBuzzer(note[noteIndex], currentTime, currentTime+delay[noteIndex], BuzzerCounter);
+    
+    if(nextNote == 1)
+    {
+      noteIndex++;
+      nextNote = 0;
+      currentTime = BuzzerCounter;
+    }
+    if(noteIndex >= 25)
+    {
+      noteIndex = 0;
+      BuzzerCounter = 0;
+      currentTime = 0;
+      ButtonAcknowledge(BUTTON1);
+      PWMAudioOff(BUZZER1);
+    }
+  }
+  
   if(WasButtonPressed(BUTTON0))
   {
-    BlinkCount++;
+    BlinkCount+= 3;
     if(BlinkCount == 250)
     {
       BlinkCount = 0;
@@ -200,6 +231,7 @@ static void UserApp1SM_Idle(void)
           u8Index = 0;
           LedOff(RED);
           LedOn(GREEN);
+          ButtonAcknowledge(BUTTON0);
         }
         else
         {
@@ -256,7 +288,15 @@ static void UserApp1SM_Error(void)
   
 } /* end UserApp1SM_Error() */
 
-
+static int setBuzzer(int freq, int start, int end, int time)
+{
+  if(start < time && time <= end)
+  {
+    PWMAudioSetFrequency(BUZZER1, freq);
+    return 0;
+  }
+  return 1;
+}
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File                                                                                                        */
